@@ -1,0 +1,41 @@
+version: 0.1
+component: build
+timeoutInSeconds: 1000
+runAs: root
+shell: bash
+env:
+  variables:
+    GO_VERSION: "1.21"
+
+steps:
+  - type: Command
+    name: "Install Go"
+    command: |
+      curl -O https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz
+      tar -xvf go${GO_VERSION}.linux-amd64.tar.gz
+      mv go /usr/local
+      export PATH=$PATH:/usr/local/go/bin
+      go version
+
+  - type: Command
+    name: "Download dependencies"
+    command: |
+      export PATH=$PATH:/usr/local/go/bin
+      go mod download
+
+  - type: Command
+    name: "Run tests"
+    command: |
+      export PATH=$PATH:/usr/local/go/bin
+      go test -v ./...
+
+  - type: Command
+    name: "Build application"
+    command: |
+      export PATH=$PATH:/usr/local/go/bin
+      CGO_ENABLED=0 GOOS=linux go build -o server
+
+outputArtifacts:
+  - name: application
+    type: BINARY
+    location: server 
