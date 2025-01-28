@@ -47,7 +47,7 @@ steps:
       # Set up repository path with build parameters
       REPO_NAME_LOWER=$(echo "${REPO_NAME}" | tr '[:upper:]' '[:lower:]')
       TENANCY_LOWER=$(echo "${TENANCY_NAMESPACE}" | tr '[:upper:]' '[:lower:]')
-      FULL_REPO_PATH="${DOCKER_REGISTRY}/${TENANCY_LOWER}/${REPO_NAME_LOWER}:${BUILD_RUN_ID}"
+      FULL_REPO_PATH="${DOCKER_REGISTRY}/${TENANCY_LOWER}/${REPO_NAME_LOWER}:${OCI_BUILD_RUN_ID}"
       
       # Debug output
       echo "Using repository path: ${FULL_REPO_PATH}"
