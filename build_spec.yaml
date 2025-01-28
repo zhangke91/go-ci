@@ -66,4 +66,4 @@ outputArtifacts:
     location: server
   - name: docker-image
     type: DOCKER_IMAGE
-    location: ${FULL_REPO_PATH} 
+    location: ${DOCKER_REGISTRY}/${TENANCY_NAMESPACE}/${REPO_NAME}:${OCI_BUILD_RUN_ID} 
