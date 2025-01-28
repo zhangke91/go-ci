@@ -8,8 +8,8 @@ env:
     GO_VERSION: "1.21"
     # OCI Container Registry configuration
     DOCKER_REGISTRY: "sjc.ocir.io"
-    DOCKER_REPOSITORY: "${OCI_TENANCY_NAME}/${OCI_REPOSITORY_NAME}"
-    IMAGE_TAG: "${OCI_BUILD_RUN_ID}"
+    DOCKER_REPOSITORY: "${TENANCY_NAMESPACE}/${REPO_NAME}"
+    IMAGE_TAG: "${BUILD_RUN_ID}"
 
 steps:
   - type: Command
@@ -42,7 +42,7 @@ steps:
   - type: Command
     name: "Build and Push Docker Image"
     command: |
-      echo "${OCI_AUTH_TOKEN}" | docker login ${DOCKER_REGISTRY} -u "${OCI_TENANCY_NAME}/${OCI_USERNAME}" --password-stdin
+      echo "${AUTH_TOKEN}" | docker login ${DOCKER_REGISTRY} -u "${TENANCY_NAMESPACE}/${USERNAME}" --password-stdin
       docker build -t ${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}:${IMAGE_TAG} .
       docker push ${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}:${IMAGE_TAG}
 
