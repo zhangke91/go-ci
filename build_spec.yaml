@@ -44,9 +44,21 @@ steps:
   - type: Command
     name: "Build and Push Docker Image"
     command: |
-      echo "${AUTH_TOKEN}" | docker login ${DOCKER_REGISTRY} -u "${TENANCY_NAMESPACE}/${USERNAME}" --password-stdin
-      docker build -t ${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}:${IMAGE_TAG} .
-      docker push ${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}:${IMAGE_TAG}
+      # Set up repository path with build parameters
+      REPO_NAME_LOWER=$(echo "${REPO_NAME}" | tr '[:upper:]' '[:lower:]')
+      TENANCY_LOWER=$(echo "${TENANCY_NAMESPACE}" | tr '[:upper:]' '[:lower:]')
+      FULL_REPO_PATH="${DOCKER_REGISTRY}/${TENANCY_LOWER}/${REPO_NAME_LOWER}:${BUILD_RUN_ID}"
+      
+      # Debug output
+      echo "Using repository path: ${FULL_REPO_PATH}"
+      echo "Using username: ${TENANCY_LOWER}/${USERNAME}"
+      
+      # Login to registry
+      echo "${AUTH_TOKEN}" | docker login ${DOCKER_REGISTRY} -u "${TENANCY_LOWER}/${USERNAME}" --password-stdin || exit 1
+      
+      # Build and push
+      docker build -t "${FULL_REPO_PATH}" . || exit 1
+      docker push "${FULL_REPO_PATH}" || exit 1
 
 outputArtifacts:
   - name: application
@@ -54,4 +66,4 @@ outputArtifacts:
     location: server
   - name: docker-image
     type: DOCKER_IMAGE
-    location: ${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}:${IMAGE_TAG} 
+    location: ${FULL_REPO_PATH} 
