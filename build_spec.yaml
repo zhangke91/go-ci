@@ -42,7 +42,7 @@ steps:
       CGO_ENABLED=0 GOOS=linux go build -o server
 
   - type: Command
-    name: "Build and Push Docker Image"
+    name: "Build Docker Image"
     command: |
       # Set up repository path with build parameters
       REPO_NAME_LOWER=$(echo "${REPO_NAME}" | tr '[:upper:]' '[:lower:]')
@@ -51,14 +51,9 @@ steps:
       
       # Debug output
       echo "Using repository path: ${FULL_REPO_PATH}"
-      echo "Using username: ${TENANCY_LOWER}/${USERNAME}"
       
-      # Login to registry
-      echo "${AUTH_TOKEN}" | docker login ${DOCKER_REGISTRY} -u "${TENANCY_LOWER}/${USERNAME}" --password-stdin || exit 1
-      
-      # Build and push
+      # Build only
       docker build -t "${FULL_REPO_PATH}" . || exit 1
-      docker push "${FULL_REPO_PATH}" || exit 1
 
 outputArtifacts:
   - name: application
