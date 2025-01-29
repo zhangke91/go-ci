@@ -9,13 +9,18 @@ env:
     # OCI Container Registry configuration
     DOCKER_REGISTRY: "sjc.ocir.io"
     DOCKER_REPOSITORY: "${TENANCY_NAMESPACE}/${REPO_NAME}"
-    BUILD_TAG: ${OCI_BUILD_RUN_ID}
   vaultVariables:
     AUTH_TOKEN: ${AUTH_TOKEN_OCID}
   exportedVariables:
     - BUILD_TAG
 
 steps:
+  - type: Command
+    name: "Set Build Tag"
+    command: |
+      export BUILD_TAG=${OCI_BUILD_RUN_ID}
+      echo "Set build tag to: $BUILD_TAG"
+
   - type: Command
     name: "Install Go"
     command: |
@@ -49,11 +54,11 @@ steps:
       # Set up repository path with build parameters
       REPO_NAME_LOWER=$(echo "${REPO_NAME}" | tr '[:upper:]' '[:lower:]')
       TENANCY_LOWER=$(echo "${TENANCY_NAMESPACE}" | tr '[:upper:]' '[:lower:]')
-      FULL_REPO_PATH="${DOCKER_REGISTRY}/${TENANCY_LOWER}/${REPO_NAME_LOWER}:${OCI_BUILD_RUN_ID}"
+      FULL_REPO_PATH="${DOCKER_REGISTRY}/${TENANCY_LOWER}/${REPO_NAME_LOWER}:${BUILD_TAG}"
       
       # Debug output
       echo "Using repository path: ${FULL_REPO_PATH}"
-      echo "Using build tag: ${BUILD_TAG}"
+      echo "Using build tag: $BUILD_TAG"
       
       # Build only
       docker build -t "${FULL_REPO_PATH}" . || exit 1
@@ -64,4 +69,4 @@ outputArtifacts:
     location: server
   - name: docker-image
     type: DOCKER_IMAGE
-    location: ${DOCKER_REGISTRY}/${TENANCY_NAMESPACE}/${REPO_NAME}:${OCI_BUILD_RUN_ID} 
+    location: ${DOCKER_REGISTRY}/${TENANCY_NAMESPACE}/${REPO_NAME}:${BUILD_TAG} 
