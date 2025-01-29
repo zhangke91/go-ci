@@ -9,7 +9,7 @@ env:
     # OCI Container Registry configuration
     DOCKER_REGISTRY: "sjc.ocir.io"
     DOCKER_REPOSITORY: "${TENANCY_NAMESPACE}/${REPO_NAME}"
-    IMAGE_TAG: "${OCI_BUILD_RUN_ID}"
+    BUILD_TAG: "${OCI_BUILD_RUN_ID}"
   vaultVariables:
     AUTH_TOKEN: ${AUTH_TOKEN_OCID}
 
@@ -47,7 +47,7 @@ steps:
       # Set up repository path with build parameters
       REPO_NAME_LOWER=$(echo "${REPO_NAME}" | tr '[:upper:]' '[:lower:]')
       TENANCY_LOWER=$(echo "${TENANCY_NAMESPACE}" | tr '[:upper:]' '[:lower:]')
-      FULL_REPO_PATH="${DOCKER_REGISTRY}/${TENANCY_LOWER}/${REPO_NAME_LOWER}:${OCI_BUILD_RUN_ID}"
+      FULL_REPO_PATH="${DOCKER_REGISTRY}/${TENANCY_LOWER}/${REPO_NAME_LOWER}:${BUILD_TAG}"
       
       # Debug output
       echo "Using repository path: ${FULL_REPO_PATH}"
@@ -61,4 +61,4 @@ outputArtifacts:
     location: server
   - name: docker-image
     type: DOCKER_IMAGE
-    location: ${DOCKER_REGISTRY}/${TENANCY_NAMESPACE}/${REPO_NAME}:${OCI_BUILD_RUN_ID} 
+    location: ${DOCKER_REGISTRY}/${TENANCY_NAMESPACE}/${REPO_NAME}:${BUILD_TAG} 
