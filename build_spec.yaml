@@ -9,7 +9,7 @@ env:
     # OCI Container Registry configuration
     DOCKER_REGISTRY: "sjc.ocir.io"
     DOCKER_REPOSITORY: "${TENANCY_NAMESPACE}/${REPO_NAME}"
-    IMAGE_TAG: "${BUILD_RUN_ID}"
+    IMAGE_TAG: "${OCI_BUILD_RUN_ID}"
   vaultVariables:
     AUTH_TOKEN: ${AUTH_TOKEN_OCID}
 
