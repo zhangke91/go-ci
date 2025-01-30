@@ -82,4 +82,3 @@ outputArtifacts:
   - name: k8s-manifest
     type: BINARY
     location: processed-manifests/deployment.yaml
-    repository: manifest
