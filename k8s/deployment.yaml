@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-app-service
+spec:
+  selector:
+    app: go-app
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-app-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: go-app
+  template:
+    metadata:
+      labels:
+        app: go-app
+    spec:
+      imagePullSecrets:
+      - name: ocirsecret
+      containers:
+      - name: go-app
+        image: sjc.ocir.io/axohla8sqlby/ci_cd_go:${BUILD_TAG}
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"

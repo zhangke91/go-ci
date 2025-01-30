@@ -63,6 +63,15 @@ steps:
       # Build only
       docker build -t "${FULL_REPO_PATH}" . || exit 1
 
+  - type: Command
+    name: "Prepare Kubernetes Manifest"
+    command: |
+      # Create a directory for processed manifests
+      mkdir -p processed-manifests
+      # Replace variables in the manifest and save to new location
+      envsubst < k8s/deployment.yaml > processed-manifests/deployment.yaml
+      cat processed-manifests/deployment.yaml  # Optional: verify content
+
 outputArtifacts:
   - name: application
     type: BINARY
@@ -70,3 +79,7 @@ outputArtifacts:
   - name: docker-image
     type: DOCKER_IMAGE
     location: ${DOCKER_REGISTRY}/${TENANCY_NAMESPACE}/${REPO_NAME}:${BUILD_TAG} 
+  - name: k8s-manifest
+    type: BINARY
+    location: processed-manifests/deployment.yaml
+    repository: manifest
